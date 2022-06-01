@@ -31,6 +31,8 @@ from pretix.base.signals import register_invoice_renderers
 from pretix.base.templatetags.money import money_filter
 from pretix.helpers.reportlab import ThumbnailingImageReader
 
+from pretix.base.invoice import Modern1Renderer
+
 logger = logging.getLogger(__name__)
 
 class ModifiedInvoiceRenderer(Modern1Renderer):
@@ -78,6 +80,7 @@ class ModifiedInvoiceRenderer(Modern1Renderer):
             )]
 
         total = Decimal('0.00')
+        donation_amount_total = Decimal('0.00')
         for line in self.invoice.lines.all():
             if has_taxes:
                 tdata.append((
@@ -91,17 +94,31 @@ class ModifiedInvoiceRenderer(Modern1Renderer):
                     money_filter(line.gross_value, self.invoice.event.currency),
                 ))
             else:
-                tdata.append((
-                    Paragraph(
-                        bleach.clean(line.description, tags=['br']).strip().replace('<br>', '<br/>').replace('\n', '<br />\n'),
-                        self.stylesheet['Normal']
-                    ),
-                    "1",
-                    money_filter(line.gross_value, self.invoice.event.currency),
-                ))
+                if ("Donation" in line.description) or ("Spende" in line.description):
+                    donation_amount_total += line.gross_value
+                else:
+                    tdata.append((
+                        Paragraph(
+                            bleach.clean(line.description, tags=['br']).strip().replace('<br>', '<br/>').replace('\n', '<br />\n'),
+                            self.stylesheet['Normal']
+                        ),
+                        "1",
+                        money_filter(line.gross_value, self.invoice.event.currency),
+                    ))
+
             taxvalue_map[line.tax_rate, line.tax_name] += line.tax_value
             grossvalue_map[line.tax_rate, line.tax_name] += line.gross_value
             total += line.gross_value
+
+        if not donation_amount_total.is_zero():
+            tdata.append((
+                Paragraph(
+                    "Spende",
+                    self.stylesheet['Normal']
+                ),
+                "1",
+                money_filter(donation_amount_total, self.invoice.event.currency),
+            ))
 
         if has_taxes:
             tdata.append([
