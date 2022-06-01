@@ -1,0 +1,5 @@
+recursive-include pretix_invoice_modification/static *
+recursive-include pretix_invoice_modification/templates *
+recursive-include pretix_invoice_modification/locale *
+include LICENSE
+exclude .gitlab-ci.yml
