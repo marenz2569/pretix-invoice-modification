@@ -45,11 +45,7 @@ License
 -------
 
 
-Copyright 2022 Raphael Michel
-
-Released under the terms of the proprietary pretix Enterprise license.
-
-
+Copyright 2022 Markus Schmidl
 
 .. _pretix: https://github.com/pretix/pretix
 .. _pretix development setup: https://docs.pretix.eu/en/latest/development/setup.html
