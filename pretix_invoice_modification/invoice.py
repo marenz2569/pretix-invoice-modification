@@ -36,6 +36,9 @@ from pretix.base.invoice import Modern1Renderer
 logger = logging.getLogger(__name__)
 
 class ModifiedInvoiceRenderer(Modern1Renderer):
+    identifier = 'modified-invoice'
+    verbose_name = pgettext('invoice', 'modified invoice renderer')
+
     def _get_story(self, doc):
         has_taxes = any(il.tax_value for il in self.invoice.lines.all()) or self.invoice.reverse_charge
 
