@@ -154,15 +154,6 @@ class ModifiedInvoiceRenderer(Modern1Renderer):
 
         story.append(Spacer(1, 10 * mm))
 
-        if self.invoice.payment_provider_text:
-            story.append(Paragraph(
-                self.invoice.payment_provider_text,
-                self.stylesheet['Normal']
-            ))
-
-        if self.invoice.payment_provider_text and self.invoice.additional_text:
-            story.append(Spacer(1, 3 * mm))
-
         if self.invoice.additional_text:
             story.append(Paragraph(
                 self.invoice.additional_text,
